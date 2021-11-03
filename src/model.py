@@ -4,7 +4,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 
 import torch.nn as nn
-
+import torch
 
 def weight_init(m):
     if isinstance(m, nn.Linear):
@@ -86,3 +86,22 @@ class LinearModel(nn.Module):
         y = self.w2(y)
 
         return y
+if __name__ == "__main__":
+    from thop import profile
+    import pdb
+    model  = LinearModel()
+    inputs = torch.rand((1,16*2))
+    print(inputs.shape)
+    # for name,parameters in model.named_parameters():
+    #     print(name,':',parameters.size())
+        # parm[name]=parameters.detach().numpy()
+    #[64,96,112,128]
+    # inputs = torch.rand((1,3,256,256))
+    # pdb.set_trace()
+    output = model(inputs)
+    #[2,16*3]
+    print(output.shape)
+    #macs, params = profile(model, inputs=(inputs,))
+    # y = model(inputs)
+    macs, params = profile(model, inputs=(inputs,))
+    print("Flops:%f G,params:%f M"%(macs/1000000000,params/1000000))
